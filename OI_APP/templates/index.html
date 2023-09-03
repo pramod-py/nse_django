@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Option Chain Data</title>
+</head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include Bootstrap JavaScript (optional, but often required for certain Bootstrap features) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Iterate through each column (excluding the first column which contains headers)
+    $("#optionTable tbody tr").each(function() {
+        $(this).find("td").each(function(index) {
+            if (index > 0) { // Skip the first column (index 0)
+                var columnValues = [];
+
+                // Collect values for the current column
+                $("#optionTable tbody tr td:nth-child(" + (index + 1) + ")").each(function() {
+                    columnValues.push(parseFloat($(this).text()));
+                });
+
+                var max = Math.max.apply(null, columnValues);
+                var min = Math.min.apply(null, columnValues);
+
+                // Highlight max and min values
+                $("#optionTable tbody tr td:nth-child(" + (index + 1) + ")").each(function() {
+                    var cellValue = parseFloat($(this).text());
+                    if (!isNaN(cellValue)) {
+                        if (cellValue === max) {
+                            $(this).css("background-color", "green"); // Highlight max value in green
+                        } else if (cellValue === min) {
+                            $(this).css("background-color", "coral"); // Highlight min value in red
+                        }
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+
+<!-- Custom CSS to adjust table size -->
+<style>
+    /* Decrease column width */
+    th, td {
+        padding: 3px; /* Adjust the padding to control cell size */
+    }
+
+    /* Decrease row height */
+    tr {
+        height: 10px; /* Adjust the height to control row size */
+    }
+</style>
+
+
+<body>
+    <div class="container">
+    <h4>OI Data:{{time_stamp}}</h4>
+   
+    {% if option_data %}
+    
+        <table class="table table-dark" id="optionTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    
+                    <th>Call OI</th>
+                    <th>CHNG Call OI</th>
+                    <th>Strike Price</th>
+                    <th>Put OI</th>
+                    <th>CHNG Put OI</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in option_data %}
+                    
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                       
+                        <td>{{ row.Call_OI }}</td>
+                        <td>{{ row.CHNG_Call_OI }}</td>
+                        <td>{{ row.Strike_Price }}</td>
+                        <td>{{ row.Put_OI }}</td>
+                        <td>{{ row.CHNG_Put_OI }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table> 
+
+<table class="table">  
+    <thead>
+        <tr>
+            <th>#</th>
+            
+            <th>Call OI</th>
+            <th>CHNG Call OI</th>
+            <th>Time</th>
+            <th>Put OI</th>
+            <th>CHNG Put OI</th>
+        </tr>
+    </thead>
+    </tbody>        
+       
+            <td>Sum</td>
+            
+            <td>{{ sum_data.Call_OI }}</td>
+            <td>{{ sum_data.CHNG_Call_OI }}</td>
+            <td>{{ sum_data.Strike_Price_ }}</td>
+            <td>{{ sum_data.Put_OI }}</td>
+            <td>{{ sum_data.CHNG_Put_OI }}</td>
+        </tr>
+    </tbody>
+</table>
+   
+    {% else %}
+        <p>No Option Chain data available.</p>
+    {% endif %}
+    </div>
+</body>
+</html>
